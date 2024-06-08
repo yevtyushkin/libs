@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "id_token_verifier"
+]
+
