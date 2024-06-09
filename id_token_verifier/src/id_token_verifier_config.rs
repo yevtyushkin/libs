@@ -10,6 +10,7 @@ pub struct IdTokenVerifierConfig {
     pub http_client: Option<HttpClient>,
 }
 
+#[derive(Debug)]
 pub enum JwksUri {
     AutoDiscover(Url),
     Direct(Url),
