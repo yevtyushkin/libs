@@ -9,7 +9,8 @@ use crate::prelude::*;
 
 pub(crate) struct Client {
     pub http_client: HttpClient,
-    pub jwks_uri: JwksUri,
+    pub jwks_uri_type: JwksUriType,
+    pub jwks_uri: Url,
 }
 
 pub(crate) struct JwksFetchResult {
@@ -25,19 +26,18 @@ impl Client {
     }
 
     async fn get_jwks_uri(&self) -> Result<Url, IdTokenVerifierError> {
-        match &self.jwks_uri {
-            JwksUri::AutoDiscover(uri) => self.auto_discover_jwks_uri(uri).await,
-            JwksUri::Direct(uri) => Ok(uri.clone()),
+        match &self.jwks_uri_type {
+            JwksUriType::AutoDiscover => self.auto_discover_jwks_uri().await,
+            JwksUriType::Direct => Ok(self.jwks_uri.clone()),
         }
     }
 
     async fn auto_discover_jwks_uri(
         &self,
-        auto_discover_uri: &Url,
     ) -> Result<Url, IdTokenVerifierError> {
         match self
             .http_client
-            .get(auto_discover_uri.clone())
+            .get(self.jwks_uri.clone())
             .send()
             .await
             .map_err(failed_auto_discover_request)?

@@ -8,14 +8,8 @@ A tiny library for validating ID tokens using JWKS.
 
 ```rust
 // Auto discover from an OpenID Connect metadata document
-let auto_discover = JwksUri::AutoDiscover(
-    "https://accounts.google.com/.well-known/openid-configuration".parse()?,
-);
-
-// Or just use a direct source
-let direct = JwksUri::Direct(
-    "https://www.googleapis.com/oauth2/v3/certs".parse()?,
-);
+let jwks_uri_type = JwksUriType::AutoDiscover;
+let jwks_uri = "https://accounts.google.com/.well-known/openid-configuration".parse()?;
 
 // Provide your custom HTTP client
 let http_client = Some(Client::new());
@@ -34,14 +28,14 @@ let aud = vec![
 ];
 
 let config = IdTokenVerifierConfig {
-    jwks_uri: auto_discover,
-    http_client,
+    jwks_uri_type,
+    jwks_uri,
     jwks_max_age,
     iss,
     aud
 };
 
-let id_token_verifier = IdTokenVerifier::new(config);
+let id_token_verifier = IdTokenVerifier::new(config, http_client);
 ```
 
 2. Define your token's payload that has a `serde::Deserialize` impl, or just use a `DefaultIdTokenPayload`:
@@ -60,5 +54,3 @@ pub struct DefaultIdTokenPayload {
 let my_id_token = "my_token";
 let payload = id_token_verifier.verify::<MyIdTokenPayload>(my_id_token).await?;
 ```
-
-

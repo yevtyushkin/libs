@@ -7,10 +7,8 @@ use id_token_verifier::prelude::*;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let config = IdTokenVerifierConfig {
-        jwks_uri: JwksUri::AutoDiscover(
-            "https://accounts.google.com/.well-known/openid-configuration".parse()?,
-        ),
-        http_client: None,
+        jwks_uri_type: JwksUriType::AutoDiscover,
+        jwks_uri: "https://accounts.google.com/.well-known/openid-configuration".parse()?,
         jwks_max_age: Some(Duration::seconds(3600)),
         iss: vec![
             "accounts.google.com".to_string(),
@@ -19,7 +17,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         aud: vec![],
     };
 
-    let id_token_verifier = IdTokenVerifier::new(config);
+    let id_token_verifier = IdTokenVerifier::new(config, None);
 
     // Paste the token from OAuth playground here
     let id_token = "";
