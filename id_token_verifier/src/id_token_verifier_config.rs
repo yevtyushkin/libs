@@ -13,6 +13,7 @@ pub struct IdTokenVerifierConfig {
     pub iss: Vec<String>,
     #[serde(deserialize_with = "from_comma_separated_string")]
     pub aud: Vec<String>,
+    #[serde(default = "default_allow_unsafe_configuration")]
     pub allow_unsafe_configuration: bool,
 }
 
@@ -45,4 +46,8 @@ where
                 .collect::<Vec<_>>()
         })
         .unwrap_or(vec![]))
+}
+
+const fn default_allow_unsafe_configuration() -> bool {
+    false
 }
