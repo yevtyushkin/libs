@@ -21,10 +21,11 @@ struct Inner {
 }
 
 impl IdTokenVerifier {
-    pub fn new(config: IdTokenVerifierConfig) -> IdTokenVerifier {
+    pub fn new(config: IdTokenVerifierConfig, http_client: Option<HttpClient>) -> IdTokenVerifier {
         let client = Client {
+            jwks_uri_type: config.jwks_uri_type,
             jwks_uri: config.jwks_uri,
-            http_client: config.http_client.unwrap_or_else(|| HttpClient::new()),
+            http_client: http_client.unwrap_or_else(|| HttpClient::new()),
         };
 
         let cache = Cache {
