@@ -21,7 +21,16 @@ struct Inner {
 }
 
 impl IdTokenVerifier {
-    pub fn new(config: IdTokenVerifierConfig, http_client: Option<HttpClient>) -> IdTokenVerifier {
+    pub fn new(config: IdTokenVerifierConfig, http_client: Option<HttpClient>) -> Result<IdTokenVerifier, IdTokenVerifierError> {
+        let iss_empty = config.iss.is_empty();
+        let aud_empty = config.aud.is_empty();
+        if !config.allow_unsafe_configuration && (iss_empty || aud_empty) {
+            return Err(IdTokenVerifierError::UnsafeConfiguration {
+                iss_empty,
+                aud_empty,
+            });
+        }
+
         let client = Client {
             jwks_uri_type: config.jwks_uri_type,
             jwks_uri: config.jwks_uri,
@@ -46,9 +55,9 @@ impl IdTokenVerifier {
             client,
         };
 
-        IdTokenVerifier {
+        Ok(IdTokenVerifier {
             inner: Arc::new(inner),
-        }
+        })
     }
 
     pub async fn verify<Payload>(&self, token: &str) -> Result<Payload, IdTokenVerifierError>
