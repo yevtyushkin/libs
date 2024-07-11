@@ -32,9 +32,7 @@ impl Client {
         }
     }
 
-    async fn auto_discover_jwks_uri(
-        &self,
-    ) -> Result<Url, IdTokenVerifierError> {
+    async fn auto_discover_jwks_uri(&self) -> Result<Url, IdTokenVerifierError> {
         match self
             .http_client
             .get(self.jwks_uri.clone())

@@ -15,9 +15,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
             "https://accounts.google.com".to_string(),
         ],
         aud: vec![],
+        allow_unsafe_configuration: true,
     };
 
-    let id_token_verifier = IdTokenVerifier::new(config, None);
+    let id_token_verifier = IdTokenVerifier::new(config, None)?;
 
     // Paste the token from OAuth playground here
     let id_token = "";
