@@ -2,7 +2,7 @@ use chrono::{Duration, TimeDelta};
 use serde::{Deserialize, Deserializer};
 use url::Url;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Eq, PartialEq)]
 pub struct IdTokenVerifierConfig {
     pub jwks_uri_type: JwksUriType,
     pub jwks_uri: Url,
@@ -15,7 +15,7 @@ pub struct IdTokenVerifierConfig {
     pub allow_unsafe_configuration: bool,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub enum JwksUriType {
     AutoDiscover,
     Direct,
@@ -35,9 +35,10 @@ where
 {
     let maybe_comma_separated_string: Option<&str> = Deserialize::deserialize(deserializer)?;
     Ok(maybe_comma_separated_string
-        .map(|maybe_comma_separated_string| {
-            maybe_comma_separated_string
+        .map(|comma_separated_string| {
+            comma_separated_string
                 .split(",")
+                .map(str::trim)
                 .map(String::from)
                 .collect::<Vec<_>>()
         })
