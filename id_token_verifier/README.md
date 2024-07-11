@@ -35,7 +35,7 @@ let config = IdTokenVerifierConfig {
     aud
 };
 
-let id_token_verifier = IdTokenVerifier::new(config, http_client);
+let id_token_verifier = IdTokenVerifier::new(config, http_client)?;
 ```
 
 2. Define your token's payload that has a `serde::Deserialize` impl, or just use a `DefaultIdTokenPayload`:
