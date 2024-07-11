@@ -1,5 +1,6 @@
 use chrono::{Duration, TimeDelta};
 use serde::{Deserialize, Deserializer};
+use std::borrow::Cow;
 use url::Url;
 
 #[derive(Deserialize, Debug, Eq, PartialEq)]
@@ -33,7 +34,8 @@ fn from_comma_separated_string<'de, D>(deserializer: D) -> Result<Vec<String>, D
 where
     D: Deserializer<'de>,
 {
-    let maybe_comma_separated_string: Option<&str> = Deserialize::deserialize(deserializer)?;
+    let maybe_comma_separated_string: Option<Cow<'_, str>> =
+        Deserialize::deserialize(deserializer)?;
     Ok(maybe_comma_separated_string
         .map(|comma_separated_string| {
             comma_separated_string
