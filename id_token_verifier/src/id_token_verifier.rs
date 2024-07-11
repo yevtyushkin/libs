@@ -21,7 +21,10 @@ struct Inner {
 }
 
 impl IdTokenVerifier {
-    pub fn new(config: IdTokenVerifierConfig, http_client: Option<HttpClient>) -> Result<IdTokenVerifier, IdTokenVerifierError> {
+    pub fn new(
+        config: IdTokenVerifierConfig,
+        http_client: Option<HttpClient>,
+    ) -> Result<IdTokenVerifier, IdTokenVerifierError> {
         let iss_empty = config.iss.is_empty();
         let aud_empty = config.aud.is_empty();
         if !config.allow_unsafe_configuration && (iss_empty || aud_empty) {

@@ -34,5 +34,8 @@ where
     D: Deserializer<'de>,
 {
     let comma_separated_string: &str = Deserialize::deserialize(deserializer)?;
-    Ok(comma_separated_string.split(",").map(String::from).collect::<Vec<_>>())
+    Ok(comma_separated_string
+        .split(",")
+        .map(String::from)
+        .collect::<Vec<_>>())
 }
