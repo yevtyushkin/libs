@@ -2,7 +2,7 @@ use chrono::{Duration, TimeDelta};
 use serde::{Deserialize, Deserializer};
 use url::Url;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct IdTokenVerifierConfig {
     pub jwks_uri_type: JwksUriType,
     pub jwks_uri: Url,
