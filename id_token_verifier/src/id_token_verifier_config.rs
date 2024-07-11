@@ -33,9 +33,13 @@ fn from_comma_separated_string<'de, D>(deserializer: D) -> Result<Vec<String>, D
 where
     D: Deserializer<'de>,
 {
-    let comma_separated_string: &str = Deserialize::deserialize(deserializer)?;
-    Ok(comma_separated_string
-        .split(",")
-        .map(String::from)
-        .collect::<Vec<_>>())
+    let maybe_comma_separated_string: Option<&str> = Deserialize::deserialize(deserializer)?;
+    Ok(maybe_comma_separated_string
+        .map(|maybe_comma_separated_string| {
+            maybe_comma_separated_string
+                .split(",")
+                .map(String::from)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or(vec![]))
 }

@@ -417,7 +417,7 @@ dependencies = [
 
 [[package]]
 name = "id_token_verifier"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "chrono",
  "jsonwebtoken",
