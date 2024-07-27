@@ -18,13 +18,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         allow_unsafe_configuration: true,
     };
 
-    let id_token_verifier = IdTokenVerifier::new(config, None)?;
+    let id_token_verifier = IdTokenVerifierImpl::new(config, None)?;
 
     // Paste the token from OAuth playground here
     let id_token = "";
-    let payload = id_token_verifier
-        .verify::<DefaultIdTokenPayload>(id_token)
-        .await?;
+    let payload: DefaultIdTokenPayload = id_token_verifier.verify(id_token).await?;
 
     println!("{payload:?}");
 

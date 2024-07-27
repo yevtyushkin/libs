@@ -35,14 +35,14 @@ let config = IdTokenVerifierConfig {
     aud
 };
 
-let id_token_verifier = IdTokenVerifier::new(config, http_client)?;
+let id_token_verifier = IdTokenVerifierImpl::new(config, http_client)?;
 ```
 
 2. Define your token's payload that has a `serde::Deserialize` impl, or just use a `DefaultIdTokenPayload`:
 
 ```rust
 #[derive(Deserialize)]
-pub struct DefaultIdTokenPayload {
+pub struct MyIdTokenPayload {
     exp: i64,
     sub: String,
 }
@@ -52,5 +52,5 @@ pub struct DefaultIdTokenPayload {
 
 ```rust
 let my_id_token = "my_token";
-let payload = id_token_verifier.verify::<MyIdTokenPayload>(my_id_token).await?;
+let payload: MyIdTokenPayload = id_token_verifier.verify(my_id_token).await?;
 ```

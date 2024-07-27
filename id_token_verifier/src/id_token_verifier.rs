@@ -9,9 +9,26 @@ use crate::internal::client::Client;
 use crate::internal::config::{CacheConfig, ValidationConfig};
 use crate::prelude::*;
 
+pub trait IdTokenVerifier<Payload> {
+    fn verify(
+        &self,
+        token: &str,
+    ) -> impl std::future::Future<Output = Result<Payload, IdTokenVerifierError>> + Send;
+}
+
 #[derive(Clone)]
-pub struct IdTokenVerifier {
+pub struct IdTokenVerifierImpl {
     inner: Arc<Inner>,
+}
+
+impl<Payload> IdTokenVerifier<Payload> for IdTokenVerifierImpl
+where
+    Payload: DeserializeOwned,
+    Self: 'static,
+{
+    async fn verify(&self, token: &str) -> Result<Payload, IdTokenVerifierError> {
+        self.verify_::<Payload>(token).await
+    }
 }
 
 struct Inner {
@@ -20,11 +37,11 @@ struct Inner {
     validation_config: ValidationConfig,
 }
 
-impl IdTokenVerifier {
+impl IdTokenVerifierImpl {
     pub fn new(
         config: IdTokenVerifierConfig,
         http_client: Option<HttpClient>,
-    ) -> Result<IdTokenVerifier, IdTokenVerifierError> {
+    ) -> Result<IdTokenVerifierImpl, IdTokenVerifierError> {
         let iss_empty = config.iss.is_empty();
         let aud_empty = config.aud.is_empty();
         if !config.allow_unsafe_configuration && (iss_empty || aud_empty) {
@@ -58,12 +75,12 @@ impl IdTokenVerifier {
             client,
         };
 
-        Ok(IdTokenVerifier {
+        Ok(IdTokenVerifierImpl {
             inner: Arc::new(inner),
         })
     }
 
-    pub async fn verify<Payload>(&self, token: &str) -> Result<Payload, IdTokenVerifierError>
+    async fn verify_<Payload>(&self, token: &str) -> Result<Payload, IdTokenVerifierError>
     where
         Payload: DeserializeOwned,
     {
