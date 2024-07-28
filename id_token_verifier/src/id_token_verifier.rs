@@ -9,11 +9,13 @@ use crate::internal::client::Client;
 use crate::internal::config::{CacheConfig, ValidationConfig};
 use crate::prelude::*;
 
-pub trait IdTokenVerifier<Payload> {
-    fn verify(
+pub trait IdTokenVerifier {
+    fn verify<Payload>(
         &self,
         token: &str,
-    ) -> impl std::future::Future<Output = Result<Payload, IdTokenVerifierError>> + Send;
+    ) -> impl std::future::Future<Output = Result<Payload, IdTokenVerifierError>> + Send
+    where
+        Payload: DeserializeOwned;
 }
 
 #[derive(Clone)]
@@ -21,12 +23,14 @@ pub struct IdTokenVerifierImpl {
     inner: Arc<Inner>,
 }
 
-impl<Payload> IdTokenVerifier<Payload> for IdTokenVerifierImpl
+impl IdTokenVerifier for IdTokenVerifierImpl
 where
-    Payload: DeserializeOwned,
     Self: 'static,
 {
-    async fn verify(&self, token: &str) -> Result<Payload, IdTokenVerifierError> {
+    async fn verify<Payload>(&self, token: &str) -> Result<Payload, IdTokenVerifierError>
+    where
+        Payload: DeserializeOwned,
+    {
         self.verify_::<Payload>(token).await
     }
 }
