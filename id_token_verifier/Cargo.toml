@@ -4,7 +4,7 @@ license = "MIT"
 authors = ["Daniyil Yevtyushkin"]
 description = "A tiny library for validating ID tokens using JWKS."
 keywords = ["id-token", "auth", "third-party-auth"]
-version = "0.4.0"
+version = "0.5.0"
 edition = "2021"
 repository = "https://github.com/yevtyushkin/libs/tree/main/id_token_verifier"
 rust-version = "1.75.0"
@@ -13,6 +13,7 @@ readme = "README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-trait = "0.1.81"
 chrono = "0.4.38"
 jsonwebtoken = "9.3.0"
 reqwest = { version = "0.12.5", features = ["json"] }

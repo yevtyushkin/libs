@@ -1,5 +1,5 @@
 use std::sync::Arc;
-
+use async_trait::async_trait;
 use reqwest::Client as HttpClient;
 use serde::de::DeserializeOwned;
 use tokio::sync::Mutex;
@@ -9,13 +9,12 @@ use crate::internal::client::Client;
 use crate::internal::config::{CacheConfig, ValidationConfig};
 use crate::prelude::*;
 
-pub trait IdTokenVerifier {
-    fn verify<Payload>(
+#[async_trait]
+pub trait IdTokenVerifier<Payload> {
+    async fn verify(
         &self,
         token: &str,
-    ) -> impl std::future::Future<Output = Result<Payload, IdTokenVerifierError>> + Send
-    where
-        Payload: DeserializeOwned;
+    ) -> Result<Payload, IdTokenVerifierError>;
 }
 
 #[derive(Clone)]
@@ -23,14 +22,12 @@ pub struct IdTokenVerifierImpl {
     inner: Arc<Inner>,
 }
 
-impl IdTokenVerifier for IdTokenVerifierImpl
+#[async_trait]
+impl<Payload> IdTokenVerifier<Payload> for IdTokenVerifierImpl
 where
-    Self: 'static,
+    Payload: DeserializeOwned,
 {
-    async fn verify<Payload>(&self, token: &str) -> Result<Payload, IdTokenVerifierError>
-    where
-        Payload: DeserializeOwned,
-    {
+    async fn verify(&self, token: &str) -> Result<Payload, IdTokenVerifierError> {
         self.verify_::<Payload>(token).await
     }
 }
