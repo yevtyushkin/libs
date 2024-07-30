@@ -1,7 +1,7 @@
-use std::sync::Arc;
 use async_trait::async_trait;
 use reqwest::Client as HttpClient;
 use serde::de::DeserializeOwned;
+use std::sync::Arc;
 use tokio::sync::Mutex;
 
 use crate::internal::cache::Cache;
@@ -11,10 +11,7 @@ use crate::prelude::*;
 
 #[async_trait]
 pub trait IdTokenVerifier<Payload> {
-    async fn verify(
-        &self,
-        token: &str,
-    ) -> Result<Payload, IdTokenVerifierError>;
+    async fn verify(&self, token: &str) -> Result<Payload, IdTokenVerifierError>;
 }
 
 #[derive(Clone)]
