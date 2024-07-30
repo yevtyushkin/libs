@@ -7,13 +7,13 @@ use url::Url;
 pub struct IdTokenVerifierConfig {
     pub jwks_uri_type: JwksUriType,
     pub jwks_uri: Url,
-    #[serde(deserialize_with = "from_seconds")]
+    #[serde(default, deserialize_with = "from_seconds")]
     pub jwks_max_age: Option<Duration>,
-    #[serde(deserialize_with = "from_comma_separated_string")]
+    #[serde(default, deserialize_with = "from_comma_separated_string")]
     pub iss: Vec<String>,
-    #[serde(deserialize_with = "from_comma_separated_string")]
+    #[serde(default, deserialize_with = "from_comma_separated_string")]
     pub aud: Vec<String>,
-    #[serde(default = "default_allow_unsafe_configuration")]
+    #[serde(default)]
     pub allow_unsafe_configuration: bool,
 }
 
@@ -42,12 +42,9 @@ where
             comma_separated_string
                 .split(",")
                 .map(str::trim)
+                .filter(|item| !item.is_empty())
                 .map(String::from)
                 .collect::<Vec<_>>()
         })
         .unwrap_or(vec![]))
-}
-
-const fn default_allow_unsafe_configuration() -> bool {
-    false
 }
